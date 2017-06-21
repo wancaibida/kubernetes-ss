@@ -1,0 +1,30 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: ss
+  labels:
+    app: ss
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ss
+  template:
+    metadata:
+      labels:
+        app: ss
+    spec:
+      containers:
+        - image: mritd/shadowsocks:3.0.6
+          name: ss
+          ports:
+            - containerPort: 6443
+              name: ss
+          env:
+            - name: PASS
+              valueFrom:
+                secretKeyRef:
+                  name: ss-config
+                  key: PASS
+          args:
+            - -s 0.0.0.0 -p 6443 -m aes-256-cfb -k $(PASS) --fast-open
